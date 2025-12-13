@@ -18,8 +18,6 @@ public:
   }
 };
 
-/* ================= BOOK CLASS ================= */
-/* ================= BOOK CLASS ================= */
 class Book
 {
 public:
@@ -38,7 +36,6 @@ public:
   }
 };
 
-/* ================= MEMBER CLASS ================= */
 class Member
 {
 public:
@@ -53,7 +50,6 @@ public:
   }
 };
 
-/* ================= LIBRARY CLASS ================= */
 class Library
 {
 public:
@@ -121,7 +117,6 @@ public:
   }
 };
 
-/* ================= MAIN ================= */
 int main()
 {
   Library lib;
@@ -134,7 +129,7 @@ int main()
     cout << "\n===== LIBRARY MANAGEMENT =====\n";
     cout << "1. Add Book\n2. Show All Books\n3. Add Member\n4. Show Members\n5. Show book and member\n0. Exit\nChoose: ";
     cin >> choice;
-    cin.ignore(); // clear newline before getline
+    cin.ignore();
     if (choice == 1)
     {
       int id;
