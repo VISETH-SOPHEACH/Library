@@ -5,6 +5,8 @@
 #include <iomanip>
 using namespace std;
 
+string password = "M3";
+
 template <typename T>
 class Manager
 {
@@ -22,8 +24,7 @@ class Book
 {
 public:
   int id;
-  string title;
-  string author;
+  string title,  author;
   bool isBorrowed;
   Book() : id(0), title(""), author(""), isBorrowed(false) {}
   Book(int i, string t, string a) : id(i), title(t), author(a), isBorrowed(false) {}
@@ -39,10 +40,9 @@ public:
 class Member
 {
 public:
-  int id;
-  string name;
+  string id, name;
   Member() : id(0), name("") {}
-  Member(int i, string n) : id(i), name(n) {}
+  Member(string i, string n) : id(i), name(n) {}
   void display() const
   {
     cout << setw(13) << id
@@ -53,7 +53,7 @@ public:
 class Library
 {
 public:
-  Manager<Book> books;
+  Manager<Book> books;  
   Manager<Member> members;
 
   void saveBooks()
@@ -111,9 +111,48 @@ public:
       if (line.empty())
         continue;
       size_t pos = line.find(',');
-      Member m(stoi(line.substr(0, pos)), line.substr(pos + 1));
+      Member m(line.substr(0, pos), line.substr(pos + 1));
       members.add(m);
     }
+  }
+
+  void deleteBook(int id)
+  {
+    for (auto it = books.items.begin(); it != books.items.end(); ++it)
+    {
+      if (it->id == id)
+      {
+        books.items.erase(it);
+        saveBooks();
+        cout << "Book deleted successfully!\n";
+        return;
+      }
+    }
+    cout << "Book not found!\n";
+  }
+
+  void deleteMember(const string &id)
+  {
+    for (auto it = members.items.begin(); it != members.items.end(); ++it)
+    {
+      if (it->id == id)
+      {
+        members.items.erase(it);
+        saveMembers();
+        cout << "Member deleted successfully!\n";
+        return;
+      }
+    }
+    cout << "Member not found!\n";
+  }
+  bool isMemberExists(const string &id)
+  {
+    for (const auto &m : members.items)
+    {
+      if (m.id == id)
+        return true;
+    }
+    return false;
   }
 };
 
@@ -127,24 +166,40 @@ int main()
   do
   {
     cout << "\n===== LIBRARY MANAGEMENT =====\n";
-    cout << "1. Add Book\n2. Show All Books\n3. Add Member\n4. Show Members\n5. Show book and member\n0. Exit\nChoose: ";
+    cout << "1. Add Book\n2. Show All Books\n3. Add Member\n4. Show Members\n5. Show book and member\n6. Delete Book\n7. Delete Member\n0. Exit\nChoose: ";
     cin >> choice;
     cin.ignore();
     if (choice == 1)
     {
+      string member_id;
       int id;
       string title, author;
+
+      cout << "Enter Member ID: ";
+      cin >> member_id;
+
+      if (!lib.isMemberExists(member_id))
+      {
+        cout << "Access denied! Member not found.\n";
+        continue;
+      }
+
       cout << "Book ID: ";
       cin >> id;
       cin.ignore();
+
       cout << "Title: ";
       getline(cin, title);
+
       cout << "Author: ";
       getline(cin, author);
+
       lib.books.add(Book(id, title, author));
       lib.saveBooks();
-      cout << "Book added successfully!\n";
+
+      cout << "Book added successfully by member " << member_id << "!\n";
     }
+
     else if (choice == 2)
     {
       cout << endl
@@ -156,8 +211,13 @@ int main()
     }
     else if (choice == 3)
     {
-      int id;
-      string name;
+      string id, name;
+      cout << "Enter Password : ";
+      cin >> password;
+      if (password != "M3")
+      {
+        break;
+      }
       cout << "Member ID: ";
       cin >> id;
       cin.ignore();
@@ -187,6 +247,22 @@ int main()
            << setw(13) << "Book Status" << endl;
       lib.books.showAll();
     }
+    else if (choice == 6)
+    {
+      int id;
+      cout << "Enter Book ID to delete: ";
+      cin >> id;
+      lib.deleteBook(id);
+    }
+    else if (choice == 7)
+    {
+      string id;
+      cin.ignore();
+      cout << "Enter Member ID to delete: ";
+      getline(cin, id);
+      lib.deleteMember(id);
+    }
+
   } while (choice != 0);
 
   cout << "Program exited.\n";
